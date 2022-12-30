@@ -1,0 +1,26 @@
+     1                                  %macro exit 0
+     2                                      mov rax, 60
+     3                                      mov rdi, 0
+     4                                      syscall
+     5                                  %endmacro
+     6                                  
+     7                                  
+     8                                  
+     9                                  section .data
+    10 00000000 686579000A                  msg db "hey",0,10
+    11                                  
+    12                                  section .bss
+    13                                  section .text
+    14                                     global main
+    15                                  main:
+    16 00000000 B801000000                  mov rax, 1
+    17 00000005 BF01000000                  mov rdi, 1
+    18 0000000A 48BE-                       mov rsi, msg
+    18 0000000C [0000000000000000] 
+    19 00000014 BA05000000                  mov rdx, 5   
+    20 00000019 0F05                        syscall
+    21                                  
+    22                                  exit
+     2 0000001B B83C000000          <1>  mov rax, 60
+     3 00000020 BF00000000          <1>  mov rdi, 0
+     4 00000025 0F05                <1>  syscall

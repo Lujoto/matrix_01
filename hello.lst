@@ -1,0 +1,26 @@
+     1                                  section .data
+     2 00000000 68656C6C6F2C20776F-         text db  "hello, world",0 
+     2 00000009 726C6400           
+     3                                  section .bss
+     4                                  section .text
+     5                                      global main
+     6                                  main:
+     7                                      ;mov rax, 1
+     8                                      ;mov rdi, 1
+     9                                      ;mov rsi, text 
+    10                                      ;mov rdx, 13
+    11                                      ;syscall
+    12 00000000 E80C000000                  call print_hello
+    13 00000005 B83C000000                  mov rax, 60
+    14 0000000A BF00000000                  mov rdi, 0
+    15 0000000F 0F05                        syscall
+    16                                  
+    17                                  print_hello:
+    18 00000011 B801000000                  mov rax, 1
+    19 00000016 BF01000000                  mov rdi, 1
+    20 0000001B 48BE-                       mov rsi, text
+    20 0000001D [0000000000000000] 
+    21 00000025 BA0D000000                  mov rdx, 13
+    22 0000002A 0F05                        syscall
+    23 0000002C C3                          ret
+    24                                  

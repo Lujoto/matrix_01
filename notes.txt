@@ -1,0 +1,70 @@
+FLAGS hold one bit. True or False. 
+
+CF - Carry 
+PF - Parity
+ZF - Zero
+SF - Sign
+OF - Overflow
+AF - Adjust
+IF - Interrupt Enabled
+
+Control flow example:
+...
+main:
+    mov rax, 1  ; rip = x
+    mov rdi, 1  ; rip = x+1
+    ...
+    syscall     ; rip = x+4
+
++n can be different values depending on memory being moved
+
+You can change the control flow of a program using jmp
+Loads a memory address into rip
+Comparisons offer separate paths for the control flow to take
+Comparisons are done on registers.
+
+        cmp rax, 23
+        cmp rax, rbx
+
+After comparisons are made, certain flags are set
+
+        cmp a, b
+a = b    ...     ZF = 1
+a != b   ...     ZF = 0
+-        ...     SF = msb(a-b)
+
+msb (most significant bit);
+
+        REGISTERS AS POINTERS
+The default registers can be treated as pointers. 
+
+        Syntax: 
+To treat as pointer, wrap the register name in square brackets: 
+       
+        mov rax, [rbx]
+
+
+        MATH OPERATIONS
+Form: 
+        operation register, value/register
+
+The first register is the subject of the operation
+
+Example: 
+        add rax, 5 ;
+        sub rbx, rax
+
+mul and div assumes the subject reg is the rax register. 
+
+
+
+        STACK
+Operation           Effect        
+push reg/value      Pushes a value onto the stack
+pop  reg            Pops a value off of the stack and stores it in reg
+mov reg, [rsp]      Stores the peek value in reg
+
+rsp is the stack pointer, if we want to peek, we use [] to access the memory at the 
+top of the stack. 
+
+
