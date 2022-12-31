@@ -1,7 +1,7 @@
-hello2: hello2.o
-	gcc -o hello2 hello2.o -no-pie
-hello2.o: hello2.asm
-	nasm -f elf64 -g -F dwarf hello2.asm -l hello2.lst
+pint: pint.o
+	gcc -o pint pint.o -no-pie
+pint.o: pint.asm
+	nasm -f elf64 -g -F dwarf pint.asm -l pint.lst
 macro: macro.o
 	gcc -o macro macro.o -no-pie
 macro.o: macro.asm
