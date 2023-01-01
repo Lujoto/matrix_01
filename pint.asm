@@ -18,40 +18,40 @@ _printRAX:
     inc rcx                  ;rcx  +1
     mov [digitSpacePos], rcx ;store rcx in the position memory
 _printRAXLoop:
-    mov rdx, 0 ;
-    mov rbx, 10 ; new line into rbx
-    div rbx
-    push rax
-    add rdx, 48 ;convert to digit character
-    mov rcx, [digitSpacePos]
-    mov [rcx], dl ; lower 8 bytes of rdX
-    inc rcx
-    mov [digitSpacePos], rcx
+    mov rdx, 0               ;
+    mov rbx, 10              ;new line into rbx
+    div rbx                  ;
+    push rax                 ;
+    add rdx, 48              ;convert to digit character
+    mov rcx, [digitSpacePos] ;
+    mov [rcx], dl            ; lower 8 bytes of rdX
+    inc rcx                  ;
+    
 
-    pop rax
-    cmp rax, 0
-    jne _printRAXLoop
+    pop rax                  ;
+    cmp rax, 0               ; 
+    jne _printRAXLoop        ;
     
 _printRAXLoop2:
-    mov rcx, [digitSpacePos]
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, rcx
-    mov rdx, 1
-    syscall
+    mov rcx, [digitSpacePos] ;
+    mov rax, 1               ;
+    mov rdi, 1               ;
+    mov rsi, rcx             ;
+    mov rdx, 1               ; 
+    syscall                  ;
     
-    mov rcx, [digitSpacePos]
-    dec rcx
-    mov [digitSpacePos], rcx
+    mov rcx, [digitSpacePos] ;
+    dec rcx                  ;
+    mov [digitSpacePos], rcx ;
 
-    cmp rcx, digitSpace
-    jge _printRAXLoop2
-    ret
+    cmp rcx, digitSpace      ;
+    jge _printRAXLoop2       ;
+    ret                      ;
     
 ep:
-    mov rax, 60
-    mov rdi, 0
-    syscall
+    mov rax, 60              ;
+    mov rdi, 0               ;
+    syscall                  ;
     ret
 
 ; 123 / 10 = 12 R 3
