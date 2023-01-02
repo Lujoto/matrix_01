@@ -7,7 +7,7 @@ section .bss
 section .text
     global main
 main:
-    mov rax, 123
+    mov rax, 223
     call _printRAX
     call ep
 
@@ -19,17 +19,17 @@ _printRAX:
     mov [digitSpacePos], rcx ;store rcx in the position memory
 _printRAXLoop:
     mov rdx, 0               ;
-    mov rbx, 10              ;new line into rbx
-    div rbx                  ;
-    push rax                 ;
-    add rdx, 48              ;convert to digit character
-    mov rcx, [digitSpacePos] ;
-    mov [rcx], dl            ; lower 8 bytes of rdX
-    inc rcx                  ;
+    mov rbx, 10              ; new line into rbx
+    div rbx                  ; do the division. rax / rbx = rax / 10 
+    push rax                 ; push the result of the division (w/out remainder)
+    add rdx, 48              ; convert to digit character
+    mov rcx, [digitSpacePos] ; pointer to position into rcx
+    mov [rcx], dl            ; lower 8 bytes of rdx
+    inc rcx                  ; increment rcx
     
 
-    pop rax                  ;
-    cmp rax, 0               ; 
+    pop rax                  ; input the result of the division (top of stack) into rax
+    cmp rax, 0               ; compare rax to 0
     jne _printRAXLoop        ;
     
 _printRAXLoop2:
