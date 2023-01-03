@@ -12,7 +12,7 @@ main:
     call ep
 
 _printRAX:
-    mov rcx, digitSpace      ;move digitSpace into rcx
+    mov rcx, digitSpace      ;move digitSpace into rcx (this changes the 7 digit value stored in rcx)
     mov rbx, 10              ;add a new line to rbx
     mov [rcx], rbx           ;move rbx to the location of rcx 
     inc rcx                  ;rcx  +1
@@ -44,10 +44,12 @@ _printRAXLoop2:
     mov rsi, rcx             ;
     mov rdx, 1               ; 
     syscall                  ;
-    
-    mov rcx, [digitSpacePos] ;
-    dec rcx                  ;
-    mov [digitSpacePos], rcx ;
+; here, we decrement the Position value. in order to do that, we must move the position
+; value into a register (rcx), use the dec operation on rcx, then move that value back
+; to the position address 
+    mov rcx, [digitSpacePos] ; moving position address into rcx
+    dec rcx                  ; decrementing that address
+    mov [digitSpacePos], rcx ; moving that address to the position address
 
     cmp rcx, digitSpace      ;
     jge _printRAXLoop2       ;
