@@ -1,7 +1,9 @@
 pint: pint.o
 	gcc -o pint pint.o -no-pie
 pint.o: pint.asm
-	nasm -f elf64 -g -F dwarf pint.asm -l pint.lst
+	nasm -f elf64 -g -F stabs pint.asm -l pint.lst
+# holy crap, this took forever to figure out. Stabs instead of Dwarf lets me
+# break (linenumber), dwarf is defective or something. 
 macro: macro.o
 	gcc -o macro macro.o -no-pie
 macro.o: macro.asm
@@ -27,5 +29,7 @@ input: input.o
 input.o: input.asm
 	nasm -f elf64 -g -F dwarf input.asm -l input.lst
 clean: 
-	rm input hello hello2 hello2.asm hello2.lst hello2.o input.o hello.o 
+	rm input hello hello2 hello2.asm hello2.lst hello2.o input.o hello.o \
+		a.exe digit digit.lst digit.o hello.lst macro.lst macro.o string string.lst string.o \
+			test.lst test.o test input.lst macro 
 

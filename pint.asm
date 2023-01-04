@@ -1,13 +1,13 @@
 section .data
 
 section .bss
-    digitSpace resb 100 ; reserve 100 bytes for the actual digit(s)?
+    digitSpace resb 16 ;reserve 100 bytes for the actual digit(s)?
     digitSpacePos resb 8 ; reserve 8 bytes for the position
 
 section .text
     global main
 main:
-    mov rax, 223
+    mov rax, 1234
     call _printRAX
     call ep
 
@@ -25,7 +25,7 @@ _printRAXLoop:
     mov rdx, 0               ; mov 0 into rdx, otherwise the rax + rdx will act as 128b
     mov rbx, 10              ; need to divide by 10 each time to acquire remainder
     div rbx                  ; do the division. rax / rbx = rax / 10 
-    push rax                 ; push the result of the division (w/out remainder)
+    ;push rax                 ; push the result of the division (w/out remainder)
     add rdx, 48              ; convert the remainder to digit character
 ;  
     mov rcx, [digitSpacePos] ; address of position into rcx
@@ -33,17 +33,21 @@ _printRAXLoop:
     inc rcx                  ; increment rcx
     mov [digitSpacePos], rcx ; mov the incremented contents of rcx to the address of pos   
 
-    pop rax                  ; input the result of the division (top of stack) into rax
+    ;pop rax                  ; input the result of the division (top of stack) into rax
     cmp rax, 0               ; compare rax to 0
     jne _printRAXLoop        ; if compare flag? is 0, jump to beginning of this func
     
 _printRAXLoop2:
+; here, we handle the printing to the console. Put the address of the position space
+; into rcx. rax 1, rdi 1 for write to stdout. 
+; mov rcx to rsi. 
     mov rcx, [digitSpacePos] ;
     mov rax, 1               ;
     mov rdi, 1               ;
     mov rsi, rcx             ;
     mov rdx, 1               ; 
     syscall                  ;
+
 ; here, we decrement the Position value. in order to do that, we must move the position
 ; value into a register (rcx), use the dec operation on rcx, then move that value back
 ; to the position address 
