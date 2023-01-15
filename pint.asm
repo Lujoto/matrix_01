@@ -1,21 +1,30 @@
 section .data
 
 section .bss
-    digitSpace resb 16 ;reserve 100 bytes for the actual digit(s)?
+    digitSpace resb 8 ;reserve 100 bytes for the actual digit(s)?
     digitSpacePos resb 8 ; reserve 8 bytes for the position
-
+    digitTest resb 8 ; 
 section .text
     global main
 main:
-    mov rax, 1234
+    mov rax, 1234567
     call _printRAX
     call ep
 
 _printRAX:
     mov rcx, digitSpace      ;move digitSpace into rcx (this changes the 7 digit value stored in rcx)
+   ; after doing the above, we can now use x/##b $rcx to view the contents at
+   ; rcx. 
+   ; when we reserve 16 bytes, and examine 32b (x/32b) at $rcx, we see the 16 bytes of 
+   ; digitSpace, and the next memory in sequence is the 8 bytes of 
+   ; memory of digitSpacePos. 
+   ; the resb command seems to reserve contiguous memory. 
+   ;  
     mov rbx, 10              ;add a new line to rbx
     mov [rcx], rbx           ;move rbx to the location of rcx 
     inc rcx                  ;rcx  +1
+    ; this increment takes us 
+
     mov [digitSpacePos], rcx ;store rcx in the position memory
 _printRAXLoop:
 ; divide rax by 10, acquire the remainder, store both. 

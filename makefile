@@ -2,8 +2,7 @@ pint: pint.o
 	gcc -o pint pint.o -no-pie
 pint.o: pint.asm
 	nasm -f elf64 -g -F stabs pint.asm -l pint.lst
-# holy crap, this took forever to figure out. Stabs instead of Dwarf lets me
-# break (linenumber), dwarf is defective or something. 
+# Stabs instead of Dwarf lets me break (linenumber), dwarf is defective or something. 
 macro: macro.o
 	gcc -o macro macro.o -no-pie
 macro.o: macro.asm
