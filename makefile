@@ -1,3 +1,7 @@
+mem: mem.o
+	gcc -o mem mem.o -no-pie
+mem.o: mem.asm
+	nasm -f elf64 -g -F stabs mem.asm -l mem.lst
 pint: pint.o
 	gcc -o pint pint.o -no-pie
 pint.o: pint.asm

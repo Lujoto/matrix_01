@@ -20,8 +20,9 @@ _printRAX:
    ; memory of digitSpacePos. 
    ; the resb command seems to reserve contiguous memory. 
    ;  
-    mov rbx, 10              ;add a new line to rbx
+    mov rbx, 10             ; load 10 into rbx 
     mov [rcx], rbx           ;move rbx to the location of rcx 
+    ;mov [rcx], 10  ; can't do this, throws "Operartion size not defined" 
     inc rcx                  ;rcx  +1
     ; this increment takes us 
 
@@ -37,10 +38,13 @@ _printRAXLoop:
     ;push rax                 ; push the result of the division (w/out remainder)
     add rdx, 48              ; convert the remainder to digit character
 ;  
-    mov rcx, [digitSpacePos] ; address of position into rcx
-    mov [rcx], dl            ; lower 8 bytes of rdx (the digit) into the address of rcx
-    inc rcx                  ; increment rcx
-    mov [digitSpacePos], rcx ; mov the incremented contents of rcx to the address of pos   
+    ;mov rcx, [digitSpacePos] ; safety mechanism? rcx is already the address of digit
+                              ; space pos; behaves the same when ommited.
+                              ; contents of position into rcx
+    mov [rcx], dl             ; lower 8 bytes of rdx (the digit) into the address of rcx
+    inc rcx                   ; increment rcx
+    mov [digitSpacePos], rcx  ; mov the incremented contents of rcx to the contents
+                              ; of pos   
 
     ;pop rax                  ; input the result of the division (top of stack) into rax
     cmp rax, 0               ; compare rax to 0
@@ -50,7 +54,8 @@ _printRAXLoop2:
 ; here, we handle the printing to the console. Put the address of the position space
 ; into rcx. rax 1, rdi 1 for write to stdout. 
 ; mov rcx to rsi. 
-    mov rcx, [digitSpacePos] ;
+    ;mov rcx, [digitSpacePos] ; this must just be for safey like in _printRAXLoop
+                                ; ommitting has no effect on ouput.
     mov rax, 1               ;
     mov rdi, 1               ;
     mov rsi, rcx             ;
