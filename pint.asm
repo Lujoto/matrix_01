@@ -38,14 +38,13 @@ _printRAXLoop:
     ;push rax                 ; push the result of the division (w/out remainder)
     add rdx, 48              ; convert the remainder to digit character
 ;  
-    ;mov rcx, [digitSpacePos] ; safety mechanism? rcx is already the address of digit
+    mov rcx, [digitSpacePos] ; safety mechanism? rcx is already the address of digit
                               ; space pos; behaves the same when ommited.
                               ; contents of position into rcx
     mov [rcx], dl             ; lower 8 bytes of rdx (the digit) into the address of rcx
     inc rcx                   ; increment rcx
     mov [digitSpacePos], rcx  ; mov the incremented contents of rcx to the contents
                               ; of pos   
-
     ;pop rax                  ; input the result of the division (top of stack) into rax
     cmp rax, 0               ; compare rax to 0
     jne _printRAXLoop        ; if compare flag? is 0, jump to beginning of this func
@@ -54,28 +53,30 @@ _printRAXLoop2:
 ; here, we handle the printing to the console. Put the address of the position space
 ; into rcx. rax 1, rdi 1 for write to stdout. 
 ; mov rcx to rsi. 
-    ;mov rcx, [digitSpacePos] ; this must just be for safey like in _printRAXLoop
+    mov rcx, [digitSpacePos] ; this must just be for safey like in _printRAXLoop
                                 ; ommitting has no effect on ouput.
-    mov rax, 1               ;
-    mov rdi, 1               ;
-    mov rsi, rcx             ;
-    mov rdx, 1               ; 
-    syscall                  ;
+    mov rax, 1               ; write
+    mov rdi, 1               ; to stdout
+    mov rsi, rcx             ; thing to write 
+    mov rdx, 1               ; how many characters
+    syscall                  ; rax 1 syscall  (syswrite)
 
 ; here, we decrement the Position value. in order to do that, we must move the position
 ; value into a register (rcx), use the dec operation on rcx, then move that value back
 ; to the position address 
+;   I think the syscall (syswrite) above resets the rcx register, so loading from 
+;   digitSpacePos is required. 
+
     mov rcx, [digitSpacePos] ; moving position address into rcx
     dec rcx                  ; decrementing that address
     mov [digitSpacePos], rcx ; moving that address to the position address
-
-    cmp rcx, digitSpace      ;
-    jge _printRAXLoop2       ;
+    cmp rcx, digitSpace      ; once rcx = the first address of digitSpace, we
+    jge _printRAXLoop2       ; are done with the loop
     ret                      ;
     
 ep:
-    mov rax, 60              ;
-    mov rdi, 0               ;
+    mov rax, 60              ; sysexit set up
+    mov rdi, 0               ; int error_code
     syscall                  ;
     ret
 

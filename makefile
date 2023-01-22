@@ -1,3 +1,7 @@
+arg: arg.o
+	gcc -o arg arg.o -no-pie
+arg.o: arg.asm
+	nasm -f elf64 -g -F stabs arg.asm -l arg.lst
 mem: mem.o
 	gcc -o mem mem.o -no-pie
 mem.o: mem.asm
