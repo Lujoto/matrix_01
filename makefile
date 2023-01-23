@@ -1,3 +1,7 @@
+xor: xor.o
+	gcc -o xor xor.o -no-pie
+xor.o: xor.asm
+	nasm -f elf64 -g -F stabs xor.asm -l xor.lst
 arg: arg.o
 	gcc -o arg arg.o -no-pie
 arg.o: arg.asm
