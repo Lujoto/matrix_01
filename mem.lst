@@ -1,0 +1,29 @@
+     1                                  section .data
+     2                                  
+     3                                  section .bss
+     4                                  
+     5 00000000 ????????????????            mem_1 resb 8
+     6 00000008 <res 10h>                   mem_2 resb 16
+     7                                  
+     8                                  
+     9                                  section .text
+    10                                      global main
+    11                                  
+    12                                  main:
+    13                                  
+    14 00000000 B800000000              mov rax, 0
+    15 00000005 BA00000000              mov rdx, 0
+    16 0000000A 48B9-                   mov rcx, mem_1
+    16 0000000C [0000000000000000] 
+    17                                  ;mov rcx, [mem_1]; this causes rcx to hold 0, and be inaccessible
+    18 00000014 48890C25[00000000]      mov [mem_1], rcx
+    19 0000001C 488B0C25[08000000]      mov rcx, [mem_2] ; does this wipe the contents of mem_1 or mov the address of rcx? 
+    20                                  
+    21                                  
+    22 00000024 E800000000              call ep
+    23                                  
+    24                                  ep:
+    25 00000029 B83C000000              mov rax, 60
+    26 0000002E BF00000000              mov rdi, 0
+    27 00000033 0F05                    syscall
+    28 00000035 C3                      ret

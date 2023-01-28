@@ -1,0 +1,83 @@
+rcx : digitSpace
+[rcx] : rbx : 10 
+
+rcx ++
+
+store rcx into the Position memory reserve
+
+Putting 100b of void into rcx, then filling that space. 
+ 1. put digitSpace (100b) into rcx
+ 2. put '10' or the newline code into rBx
+ 3. store that in the address of rcx. 
+ 4. increment rcx, perhaps to accept the next value? 
+ 5. mov the new incremented value of rcx into the 8 byte Position storage
+    a. this is an address value, and we are moving it to a pointer [digitSpacePos]
+
+_printRAXLoop
+ 6. we move 0 into rdx, "so rdx will not act as the second 64b half of the rax register"
+    making a single 128b register. 
+ 7. put "10" into rbx as the divisor? dividend? the thing we want to divide by
+ 8. do the division using the div operator on the rbx register. implicitly divides
+    rax / (register upon which the operation is performed.)
+ 9. push the result of the division to the stack. rdx now holds the remainder. 
+        not sure why we are pushing to the stack, as nothing is changed in rax between 
+        the push operation and the pop operation, right back into rax
+        removed the push and pop operations, and achieved the same result. Not needed
+        I guess
+
+ 10. use the add operation on rdx, which holds the remainder of the div operation, 
+     to convert the ascii code to the corresponding integer. +48 to the remainder
+ 
+== now we have rax holding the result of the division, and we have rdx holding
+the ascii char representing the integer corresponding to the remainder. 
+
+11. mov the address of the reserved space for the position into rcx
+12. mov the lower 8 bits of rdx (the single digit remainder stored in rdx) to the 
+    address of rcx, which is now the the address of the space reserved for the position
+13. perform increment operation on rcx, adress++
+14. Then move the incremented address value back to the address of the position memory
+
+
+
+
+
+
+
+ === Learnin ====
+
+ gdb will only show you the name of the reserved memory if you examine the exact
+ address. it will group them by 8 byte blocks, 
+
+ 0x40402c <digitSpace>:  10      0       0       0       0       0       0       0
+0x404034 <digitSpacePos>:       45      64      64      0       0       0       0       0
+0x40403c <digitTest>:   0       0       0       0       0       0       0       0
+0x404044:       0       0       0       0       0       0       0       0
+
+vs, inc 0x40402c to 0x40402d -> 
+0x40402d:       0       0       0       0       0       0       0       45
+0x404035:       64      64      0       0       0       0       0       0
+0x40403d:       0       0       0       0       0       0       0       0
+0x404045:       0       0       0       0       0       0       0       0
+
+we are examining the same memory, minus the first byte and plus one byte at the end,
+but gdb does not name the memory, because the addresses that are listed are not the 
+address of the first byte of the named memory. 
+
+
+inc
+mov [digitSpacePos], rcx
+
+0x40402c <digitSpace>:  0x0a    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x404034 <digitSpacePos>:       0x2d    0x40    0x40    0x00    0x00    0x00    0x00    0x00
+0x40403c <digitTest>:   0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+0x404044:       0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
+
+This is the result of x/32x at 0x040402c
+
+we can see the 0x40402d is now stored at the address of digitSpacePos, loaded backward. 
+
+we loaded digitSpace into rcx, we moved a 10 into rbx, then moved the contents of rbx 
+to the memory location of rcx.
+we incremented rcx, which first held the address of digitSpace reserved memory. 
+then we stored the new value in rcx (an address) into the digitSpacePos chunk of memory.
+

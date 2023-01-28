@@ -1,0 +1,89 @@
+     1                                  section .data
+     2                                  
+     3                                  section .bss
+     4 00000000 ????????????????            digitSpace resb 8 ;reserve 100 bytes for the actual digit(s)?
+     5 00000008 ????????????????            digitSpacePos resb 8 ; reserve 8 bytes for the position
+     6 00000010 ????????????????            digitTest resb 8 ; 
+     7                                  section .text
+     8                                      global main
+     9                                  main:
+    10 00000000 B887D61200                  mov rax, 1234567
+    11 00000005 E805000000                  call _printRAX
+    12 0000000A E882000000                  call ep
+    13                                  
+    14                                  _printRAX:
+    15 0000000F 48B9-                       mov rcx, digitSpace      ;move digitSpace into rcx (this changes the 7 digit value stored in rcx)
+    15 00000011 [0000000000000000] 
+    16                                     ; after doing the above, we can now use x/##b $rcx to view the contents at
+    17                                     ; rcx. 
+    18                                     ; when we reserve 16 bytes, and examine 32b (x/32b) at $rcx, we see the 16 bytes of 
+    19                                     ; digitSpace, and the next memory in sequence is the 8 bytes of 
+    20                                     ; memory of digitSpacePos. 
+    21                                     ; the resb command seems to reserve contiguous memory. 
+    22                                     ;  
+    23 00000019 BB0A000000                  mov rbx, 10             ; load 10 into rbx 
+    24 0000001E 488919                      mov [rcx], rbx           ;move rbx to the location of rcx 
+    25                                      ;mov [rcx], 10  ; can't do this, throws "Operartion size not defined" 
+    26 00000021 48FFC1                      inc rcx                  ;rcx  +1
+    27                                      ; this increment takes us 
+    28                                  
+    29 00000024 48890C25[08000000]          mov [digitSpacePos], rcx ;store rcx in the position memory
+    30                                  _printRAXLoop:
+    31                                  ; divide rax by 10, acquire the remainder, store both. 
+    32                                  ; push the result of rax / 10 to the stack. 
+    33                                  ; remainder is stored in rdx, convert it to an integer character by adding 48
+    34                                  
+    35 0000002C BA00000000                  mov rdx, 0               ; mov 0 into rdx, otherwise the rax + rdx will act as 128b
+    36 00000031 BB0A000000                  mov rbx, 10              ; need to divide by 10 each time to acquire remainder
+    37 00000036 48F7F3                      div rbx                  ; do the division. rax / rbx = rax / 10 
+    38                                      ;push rax                 ; push the result of the division (w/out remainder)
+    39 00000039 4883C230                    add rdx, 48              ; convert the remainder to digit character
+    40                                  ;  
+    41 0000003D 488B0C25[08000000]          mov rcx, [digitSpacePos] ; safety mechanism? rcx is already the address of digit
+    42                                                                ; space pos; behaves the same when ommited.
+    43                                                                ; contents of position into rcx
+    44 00000045 8811                        mov [rcx], dl             ; lower 8 bytes of rdx (the digit) into the address of rcx
+    45 00000047 48FFC1                      inc rcx                   ; increment rcx
+    46 0000004A 48890C25[08000000]          mov [digitSpacePos], rcx  ; mov the incremented contents of rcx to the contents
+    47                                                                ; of pos   
+    48                                      ;pop rax                  ; input the result of the division (top of stack) into rax
+    49 00000052 4883F800                    cmp rax, 0               ; compare rax to 0
+    50 00000056 75D4                        jne _printRAXLoop        ; if compare flag? is 0, jump to beginning of this func
+    51                                      
+    52                                  _printRAXLoop2:
+    53                                  ; here, we handle the printing to the console. Put the address of the position space
+    54                                  ; into rcx. rax 1, rdi 1 for write to stdout. 
+    55                                  ; mov rcx to rsi. 
+    56 00000058 488B0C25[08000000]          mov rcx, [digitSpacePos] ; this must just be for safey like in _printRAXLoop
+    57                                                                  ; ommitting has no effect on ouput.
+    58 00000060 B801000000                  mov rax, 1               ; write
+    59 00000065 BF01000000                  mov rdi, 1               ; to stdout
+    60 0000006A 4889CE                      mov rsi, rcx             ; thing to write 
+    61 0000006D BA01000000                  mov rdx, 1               ; how many characters
+    62 00000072 0F05                        syscall                  ; rax 1 syscall  (syswrite)
+    63                                  
+    64                                  ; here, we decrement the Position value. in order to do that, we must move the position
+    65                                  ; value into a register (rcx), use the dec operation on rcx, then move that value back
+    66                                  ; to the position address 
+    67                                  ;   I think the syscall (syswrite) above resets the rcx register, so loading from 
+    68                                  ;   digitSpacePos is required. 
+    69                                  
+    70 00000074 488B0C25[08000000]          mov rcx, [digitSpacePos] ; moving position address into rcx
+    71 0000007C 48FFC9                      dec rcx                  ; decrementing that address
+    72 0000007F 48890C25[08000000]          mov [digitSpacePos], rcx ; moving that address to the position address
+    73 00000087 4881F9[00000000]            cmp rcx, digitSpace      ; once rcx = the first address of digitSpace, we
+    74 0000008E 7DC8                        jge _printRAXLoop2       ; are done with the loop
+    75 00000090 C3                          ret                      ;
+    76                                      
+    77                                  ep:
+    78 00000091 B83C000000                  mov rax, 60              ; sysexit set up
+    79 00000096 BF00000000                  mov rdi, 0               ; int error_code
+    80 0000009B 0F05                        syscall                  ;
+    81 0000009D C3                          ret
+    82                                  
+    83                                  ; 123 / 10 = 12 R 3
+    84                                      ; store 3
+    85                                  ; 12 / 10 = 1 R 2
+    86                                      ; store 2
+    87                                  ; 1 / 10  = 0 R 1
+    88                                      ; store 1
