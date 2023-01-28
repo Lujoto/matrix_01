@@ -2,7 +2,7 @@
 %include "_pr.inc"
 
 section .data
-    bNum db 123
+    bNum db 124
     wNum dw 12345
     dNum dd 1234567890
     qNum1 dq 1234567890123456789
