@@ -1,7 +1,7 @@
 extern printf
 
 section .data
-    number dq 12
+    number dq 2
     fmt     db "the sum from 0 to %ld is %ld",10,0
 section .bss
 section .text
@@ -13,14 +13,11 @@ main:
     mov rax, 0
     mov rbx, 0 ; rbx will be the counter
 
-
-
-
+    mov rcx, [number]
 loopf:
-    add rax, rbx
-    inc rbx
-    cmp rbx, [number]
-    jle loopf
+    
+    add rax, rcx
+    loop loopf ; loop command decrements rcx and jne to 0
 
     mov rdi, fmt
     mov rsi, [number]
