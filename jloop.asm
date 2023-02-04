@@ -1,7 +1,7 @@
 ;jump loop
 extern printf
 section .data
-    number  dq      67
+    number  dq      1000000000
     fmt     db  "the sum from 0 to %ld is %ld",10,0
 
 section .bss
