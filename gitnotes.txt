@@ -1,0 +1,47 @@
+GIT
+
+git add to stage changes
+    add filename
+git commit to add to project history
+    -a, -m "commit msg"
+git push to write to remote repo
+    push filename
+git pull reads files into local repo from remote repo
+    -all
+git branch creates a branch
+    branch branchname
+    no arg shows which branch is active
+git checkout switches branches
+    git checkout new-branch
+    git checkout main
+git status shows info about the current branch
+
+git merge combines the history of two branches. 
+
+fast forward merge is used if only one branch has been made and updated
+from main.
+
+        -*-*
+* - * -/
+    ^      ^
+main|      |branch
+
+
+the fast forward merge takes the main pointer and shifts it to the branch position.
+
+deleting the branch after merging is okay. The repo is left with one main branch. 
+
+===
+
+when pushing to remote repo, we bring the remote repo up to speed on the local changes
+by moving the origin/main pointer to the latest in the branch. 
+
+origin/main
+    | 
+* - * - * - *
+            |
+        local main
+
+
+===
+
