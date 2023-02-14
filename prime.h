@@ -55,9 +55,15 @@ bool isPrime(int a) {
     } 
 }
 
-
+// trying to figure out how realloc works. 
+// 1. don't use casts, unless you are using a c++ compiler, even then do more research .
+// 2. using sizeof(type) is not necessary, and forces you to repeat yourself. Use the dereferenced
+//      pointer which will point to the allocated memory: int* p = malloc(sizeof(*p)*size_t)); 
+//      this also means if you change the type of the pointer, you won't have to modify the malloc 
+//      argument. 
+// 3. sizeof(int) = 4, sizeof(int*) = 8. Why?  
 int* alloc(size_t a) {
-    int* p = malloc(sizeof(int)*a);
+    int* p = malloc(sizeof(*p)*a);
     for (int i = 0; i < a+1; i++) { 
         p[i] = i;
         printf(" %d ", p[i]);
