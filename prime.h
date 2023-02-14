@@ -55,7 +55,25 @@ bool isPrime(int a) {
 }
 
 
+int* alloc(size_t a) {
+    int* p = (int*)malloc(sizeof(int)*a);
+    for (int i = 0; i < a; i++) {
+        p[i] = i;
+        printf(" %d ", p[i]);
+    }
 
+    printf("%c", '\n');
+
+
+    p = (int*)realloc(p, a+1);
+   
+    for (int i = 0; i < a; i++) {
+        p[i] = i;
+        printf(" %d ", p[i]);
+    }       
+
+    return p;
+}
 
 
 
