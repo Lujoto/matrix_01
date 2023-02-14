@@ -1,0 +1,12 @@
+we can use the linux "time" command: 
+
+time ./bloop
+
+to show output: 
+
+the sum from 0 to 1000000000 is 500000000500000000
+
+real    0m1.336s
+user    0m1.336s
+sys     0m0.000s
+
