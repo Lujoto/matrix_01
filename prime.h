@@ -20,22 +20,21 @@ int* coprimes(int a, size_t n) {
 
 // find the factors of a number, provide a size to allocate.
 int* factors(int a, size_t n) {
-    int *p = malloc(sizeof(int) * n);
-    int c = 0;
-    for (int i = 1; i < a; i++) {
+    int *p = malloc(sizeof(*p) * n);
+    size_t c = 0;
+    for (int i = 1; i <= (a/2); i++) {
         if (c > n) {
-            p = (int*) realloc(p, sizeof(int)*(c));
+            int* k = realloc(p, sizeof(*p) * c);
+            if (k != NULL) {
+                p = k;
+            } else {printf("realloc failed at %d%c", i, '\n');}
         }
+        // if a % i == 0, add the factor to the array, and increment the number of factors
         if (a%i == 0) {
            p[c] = i;
-           c++; 
+           c++;
         }
-
-
     }
-   
-    //int *l = (int*) realloc (p, sizeof(int)*c);
-
     return p;
 }
 
@@ -50,18 +49,22 @@ bool isPrime(int a) {
         return false;   
     } else {
         for (int j = 3; j < (a/2); j++) { 
-            if (a%j == 0) { return false;   } 
+            if (a%j == 0) { return false; } 
         } return true; 
     } 
 }
 
-// trying to figure out how realloc works. 
+// trying to figure out how realloc/malloc works. 
 // 1. don't use casts, unless you are using a c++ compiler, even then do more research .
 // 2. using sizeof(type) is not necessary, and forces you to repeat yourself. Use the dereferenced
 //      pointer which will point to the allocated memory: int* p = malloc(sizeof(*p)*size_t)); 
 //      this also means if you change the type of the pointer, you won't have to modify the malloc 
 //      argument. 
-// 3. sizeof(int) = 4, sizeof(int*) = 8. Why?  
+// 3. sizeof(int) = 4, sizeof(int*) = 8. Why?  int* is an address. on 64-bit machines, an address
+//      is 8 integer digits. 
+// 4. you can realloc a pointer to itself, or to another pointer. 
+// 
+
 int* alloc(size_t a) {
     int* p = malloc(sizeof(*p)*a);
     for (int i = 0; i < a+1; i++) { 

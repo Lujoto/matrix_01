@@ -9,12 +9,15 @@ int main() {
 
 
 //int *p = factors(10, K);
-size_t t = 4;
-int *p = alloc(t);
+size_t t = 1;
+int *p = factors(24, t);
+int sum = 0;
 
-/*for (int i = 0; i < K; i++) {
-        printf(" %d ", p[i] );
-}*/
+for (int i = 0; i < 1; i++) {
+        sum = p[i];
+        printf(" %d ", sum );
+        }
+
 
 free(p);
 
