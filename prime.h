@@ -23,17 +23,16 @@ int* factors(int a, size_t n) {
     int *p = malloc(sizeof(*p) * n);
     size_t c = 0;
     for (int i = 1; i <= (a/2); i++) {
-        if (c > n) {
-            int* k = realloc(p, sizeof(*p) * c);
-            if (k != NULL) {
-                p = k;
-            } else {printf("realloc failed at %d%c", i, '\n');}
+        if (c >= n) {
+            p = realloc(p, (c+2) * sizeof(*p)); // c+1 is necessary, c+2 is used for 0 termination below. 
+            // you can assume the block of memory is 0-terminated, but you can ensure this by padding.
         }
         // if a % i == 0, add the factor to the array, and increment the number of factors
         if (a%i == 0) {
-           p[c] = i;
+           p[c] = i; // ***getting an invalid write size 4 here. 
            c++;
         }
+        p[c] = 0;
     }
     return p;
 }
@@ -41,6 +40,7 @@ int* factors(int a, size_t n) {
 // return true if a and b are coprime. 
 bool isCoprime(int a, int b) {
     
+        
 }
 
 // return true if arg is prime, false if not. 

@@ -13,11 +13,16 @@ size_t t = 1;
 int *p = factors(24, t);
 int sum = 0;
 
-for (int i = 0; i < 1; i++) {
+for (int i = 0; p[i] != 0; i++) {
+        printf(" %d ", p[i]);
+}
+
+
+/*for (int i = 0; i < sizeof(p)/sizeof(*p); i++) {
         sum = p[i];
         printf(" %d ", sum );
         }
-
+*/
 
 free(p);
 
