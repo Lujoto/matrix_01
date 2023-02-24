@@ -5,6 +5,8 @@
 #include <math.h>
 #include <stdio.h>  
 
+#define N 100
+
 // coprime: find all smaller numbers that share no common factors. "Relatively Prime"
 int* coprimes(int a, size_t n) {
 
@@ -32,14 +34,28 @@ int* factors(int a, size_t n) {
            p[c] = i; // ***getting an invalid write size 4 here. 
            c++;
         }
-        p[c] = 0;
     }
+    p[c] = 0;
     return p;
 }
 
 // return true if a and b are coprime. 
 bool isCoprime(int a, int b) {
-    
+
+    printf(" %d and %d are being compared... \n", a, b);
+
+    int* af = factors(a, N);
+    int* bf = factors(b, N);
+
+    for (size_t j = 1; af[j] != 0; j++) {
+        for (size_t k = 1; bf[k] != 0; k++) {
+            if (af[j] == bf[k]) {
+                return false;
+            }
+        }
+    }
+
+return true;
         
 }
 
