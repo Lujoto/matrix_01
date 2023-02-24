@@ -14,14 +14,14 @@ size_t t = 1;
 //int *p = factors(24, t);
 
 int j = 100;
-int l = 12;
+int l = 6;
 int d = 8;
 int f = 18;
 int m = 9;
 
-bool q = isCoprime(j, l);
+//bool q = isCoprime(j, l);
 
-printf("the two ints %s coprime. \n", q ? "are" : "are not");
+//printf("the two ints %s coprime. \n", q ? "are" : "are not");
 
 
 int* p = coprimes(l, N);

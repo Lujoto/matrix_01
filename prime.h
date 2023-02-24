@@ -17,16 +17,16 @@ bool isPrime(int);
 // coprime: find all smaller numbers that share no common factors. "Relatively Prime"
 int* coprimes(int a, size_t n) {
 
-    int* p = malloc(sizeof(int)*n);
-    size_t c = 0;
-    for (int i = 2; i < a; i++) {
+    int* p = calloc(n, sizeof(int)); // if you use malloc here, valgrind will whine that 
+    size_t c = 0;                   // you're using uninitialized memory. Use calloc to 
+    for (int i = 2; i < a; i++) {   // set all blocks to 0. 
 
         if (isCoprime(i, a)) {
            p[c] = i; 
            c++;
         }
 
-        if (c == n) {
+        if (c == n) { //this needs work
             n *= 2;
             p = reallocate(p, n);
         }
@@ -54,7 +54,7 @@ int* factors(int a, size_t n) {
     size_t c = 0;
     for (int i = 1; i <= (a/2); i++) {
         if (c >= n) {
-            p = realloc(p, (c+2) * sizeof(*p)); // c+1 is necessary, c+2 is used for 0 termination below. 
+            p = realloc(p, (c+3) * sizeof(*p)); // c+1 is necessary, c+2 is used for 0 termination below. 
             // you can assume the block of memory is 0-terminated, but you can ensure this by padding.
         }
         // if a % i == 0, add the factor to the array, and increment the number of factors
@@ -63,7 +63,8 @@ int* factors(int a, size_t n) {
            c++;
         }
     }
-    p[c] = 0; // zero termination
+    p[c] = a; // add the number itself as a factor
+    p[c+1] = 0; // zero termination
     return p;
 }
 
@@ -72,17 +73,20 @@ bool isCoprime(int a, int b) {
 
     printf(" %d and %d are being compared... \n", a, b);
 
-    int* af = factors(a, N);
-    int* bf = factors(b, N);
+    int* af = factors(a, N); // we don't return these two pointers!!! these are never 
+    int* bf = factors(b, N); // freed. Memory leak!
 
     for (size_t j = 1; af[j] != 0; j++) {
         for (size_t k = 1; bf[k] != 0; k++) {
             if (af[j] == bf[k]) {
+                free(af);
+                free(bf);
                 return false;
             }
         }
     }
-
+free(af);
+free(bf);
 return true;
         
 }
