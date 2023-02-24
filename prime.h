@@ -7,18 +7,46 @@
 
 #define N 100
 
+// PROTOTYPES
+
+int *reallocate(int*, size_t n);
+int *factors(int, size_t);
+bool isCoprime(int, int);
+bool isPrime(int);
+
 // coprime: find all smaller numbers that share no common factors. "Relatively Prime"
 int* coprimes(int a, size_t n) {
 
     int* p = malloc(sizeof(int)*n);
-
+    size_t c = 0;
     for (int i = 2; i < a; i++) {
-    
+
+        if (isCoprime(i, a)) {
+           p[c] = i; 
+           c++;
+        }
+
+        if (c == n) {
+            n *= 2;
+            p = reallocate(p, n);
+        }
+        
     }
 
     return p;
 
 }
+
+
+int* reallocate(int* p, size_t n)  {
+    
+        p = realloc(p, n * sizeof(*p)); 
+
+        return p;
+    }
+ 
+    
+
 
 // find the factors of a number, provide a size to allocate.
 int* factors(int a, size_t n) {
@@ -31,11 +59,11 @@ int* factors(int a, size_t n) {
         }
         // if a % i == 0, add the factor to the array, and increment the number of factors
         if (a%i == 0) {
-           p[c] = i; // ***getting an invalid write size 4 here. 
+           p[c] = i; 
            c++;
         }
     }
-    p[c] = 0;
+    p[c] = 0; // zero termination
     return p;
 }
 
@@ -70,7 +98,7 @@ bool isPrime(int a) {
     } 
 }
 
-// trying to figure out how realloc/malloc works. 
+//          on malloc/realloc: 
 // 1. don't use casts, unless you are using a c++ compiler, even then do more research .
 // 2. using sizeof(type) is not necessary, and forces you to repeat yourself. Use the dereferenced
 //      pointer which will point to the allocated memory: int* p = malloc(sizeof(*p)*size_t)); 
@@ -80,31 +108,6 @@ bool isPrime(int a) {
 //      is 8 integer digits. 
 // 4. you can realloc a pointer to itself, or to another pointer. 
 // 
-
-int* alloc(size_t a) {
-    int* p = malloc(sizeof(*p)*a);
-    for (int i = 0; i < a+1; i++) { 
-        p[i] = i;
-        printf(" %d ", p[i]);
-    }
-
-    printf("   size of int* %c %lu %c", '\n', sizeof(int), '\n');
-
-    //p = (int*)realloc(p, a+1);
-    int* j = realloc(p, sizeof(int)*(a+1));
-
-    for (int i = 0; i < a+2; i++) {
-        j[i] = i;
-        printf(" %d ", j[i]);
-    }       
-
-    printf("%c", '\n');
-
-
-    return p;
-}
-
-
 
 
 

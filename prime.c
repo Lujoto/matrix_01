@@ -24,19 +24,16 @@ bool q = isCoprime(j, l);
 printf("the two ints %s coprime. \n", q ? "are" : "are not");
 
 
+int* p = coprimes(l, N);
 
-//for (int i = 0; p[i] != 0; i++) {
- //       printf(" %d ", p[i]);
-//}
+for (size_t i = 0; p[i] != 0; i++) {
+       printf(" %d ", p[i]);
+}
 
 
-/*for (int i = 0; i < sizeof(p)/sizeof(*p); i++) {
-        sum = p[i];
-        printf(" %d ", sum );
-        }
-*/
 
-//free(p);
+
+free(p);
 
 /*printf("%cthe size of int is %lu %cthe size of int* is %lu%c", 
         '\n', sizeof(int), '\n', sizeof(int*), '\n');
