@@ -65,7 +65,7 @@ int* factors(int a, size_t n) {
     }
     p[c] = a; // add the number itself as a factor
     p[c+1] = 0; // zero termination
-    return p;
+    return p;   
 }
 
 // return true if a and b are coprime. 
@@ -79,13 +79,13 @@ bool isCoprime(int a, int b) {
     for (size_t j = 1; af[j] != 0; j++) {
         for (size_t k = 1; bf[k] != 0; k++) {
             if (af[j] == bf[k]) {
-                free(af);
-                free(bf);
+                free(af); // we must free this memory, since we don't return it and 
+                free(bf); // thus have no way to access it after the function exits
                 return false;
             }
         }
     }
-free(af);
+free(af); // we must free this memory whether the function returns true or false. 
 free(bf);
 return true;
         

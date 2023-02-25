@@ -14,6 +14,7 @@ size_t t = 1;
 //int *p = factors(24, t);
 
 int j = 100;
+int g = 500;
 int l = 6;
 int d = 8;
 int f = 18;
@@ -24,14 +25,11 @@ int m = 9;
 //printf("the two ints %s coprime. \n", q ? "are" : "are not");
 
 
-int* p = coprimes(l, N);
+int* p = coprimes(g, N);
 
 for (size_t i = 0; p[i] != 0; i++) {
        printf(" %d ", p[i]);
 }
-
-
-
 
 free(p);
 
