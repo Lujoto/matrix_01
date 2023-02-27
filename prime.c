@@ -31,6 +31,7 @@ for (size_t i = 0; p[i] != 0; i++) {
        printf(" %d ", p[i]);
 }
 
+
 free(p);
 
 /*printf("%cthe size of int is %lu %cthe size of int* is %lu%c", 
