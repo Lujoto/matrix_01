@@ -19,8 +19,8 @@ node *current = NULL;
 
 // PROTOTYPES //
 void printlist(node*);
-void insert(int, float);
-void delete(node*);
+node* insert(int, float);
+void delete(int);
 
 
 
@@ -33,14 +33,42 @@ void printlist(node* n) {
 }
 
 // Insert a node at the head of the list //
-void insert(int key, float contents) {
+node* insert(int key, float contents) {
+
    node *new = malloc(sizeof(*new)); 
    new->contents = contents;
    new->key = head->key+1;   
    new->next = head;
    head = new;
+   return new;
+
 }
 
-
+void delete(int k) {
+    if (head == NULL) {
+        return; 
+    }  
+    node* curr = head;
+    node* prev = NULL;  
+    while (curr->next != NULL) {
+        if (curr->key == k) {
+            prev->next = curr->next; // link the previous and next nodes
+            free(curr);
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+}
+ 
+void freelist(node* h) {
+    while (h->next != NULL) {
+        node* curr = h; //point to the current node
+        h = h->next; //inc h
+        free(curr); //free the pointed to node
+    }
+    free(h); // free the last element
+      
+}
 
 #endif
