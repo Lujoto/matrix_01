@@ -4,7 +4,7 @@
 #include <stdio.h> 
 #include <math.h>
 #include <stdlib.h>
-
+#include <string.h> 
 
 // struct typedef //
 typedef struct node {
@@ -19,47 +19,65 @@ node *current = NULL;
 
 // PROTOTYPES //
 void printlist(node*);
-node* insert(int, float);
+node* insert(float);
 void delete(int);
+void freelist(node*);
 
 
 
-// Print the list from the head to the tail //
+// Print the list from a node to the tail //
 void printlist(node* n) {
-    while (n != NULL) {
-        printf("(%d, %f)", n->key, n->contents);
+    if (n != NULL) {
+        while (n != NULL) {
+        printf("\n(%d, %f)\n", n->key, n->contents);
         n = n->next;
-    }
+    } 
+  } else {
+    printf("\n%s\n", "No list to print. ");
+  }
 }
 
 // Insert a node at the head of the list //
-node* insert(int key, float contents) {
-
-   node *new = malloc(sizeof(*new)); 
-   new->contents = contents;
-   new->key = head->key+1;   
-   new->next = head;
-   head = new;
-   return new;
-
+node* insert(float contents) {
+    if (head != NULL) {
+        node* new = malloc(sizeof(*new)); 
+        new->contents = contents;
+        new->key = head->key+1;   
+        new->next = head;
+        head = new;
+        return head;
+    } else { 
+        printf("\n%s\n", "No list to push to...");
+        return NULL;
+    }
 }
 
 void delete(int k) {
     if (head == NULL) {
-        return; 
-    }  
+        printf("\n%s\n", "No nodes to delete.");
+        return;
+    }
     node* curr = head;
-    node* prev = NULL;  
-    while (curr->next != NULL) {
-        if (curr->key == k) {
-            prev->next = curr->next; // link the previous and next nodes
-            free(curr);
-        } else {
+    current = head;  
+    node* prev = NULL;
+    if (k == 0) {
+       head = head->next;
+       free(curr);
+       return;
+    }
+    for (int i = 0; i < k; i++) {
+        if (current->next != NULL) {
+            current = curr->next;
             prev = curr;
-            curr = curr->next;
+            curr = curr->next; 
+        } else {
+            printf("\n%s %d\n", "Delete: Index out of range:", k);
+            return;
         }
     }
-}
+   prev->next = current->next;
+   free(current);
+} 
  
 void freelist(node* h) {
     while (h->next != NULL) {
@@ -71,4 +89,9 @@ void freelist(node* h) {
       
 }
 
+
+
+
 #endif
+
+
