@@ -55,8 +55,17 @@ node* find_by_val(node* n, int v) {
 }
 
 void printTree(node* n, size_t level) {
+    if (n == NULL) {
+        return;
+    }
+    printf("-%d-%lu\n", n->val, level);
 
+    printTree(n->left, level+1);
+    
+    printTree(n->right, level+1);
+    
 }
+
 
 
 
