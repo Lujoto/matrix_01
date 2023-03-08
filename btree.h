@@ -59,9 +59,7 @@ void printTree(node* n, size_t level) {
         return;
     }
     printf("-%d-%lu\n", n->val, level);
-
     printTree(n->left, level+1);
-    
     printTree(n->right, level+1);
     
 }
