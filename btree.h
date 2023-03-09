@@ -19,12 +19,7 @@ node* find_by_val(node*, int);
 void printTree(node*, size_t);
 void freeTree(node*, int);
 
-node* createRoot(int v) {
-    node* r = malloc(sizeof(*r));
-    r->val = v;
-    r->left = NULL;
-    r->right = NULL;
-}
+
 
 node* createNode(int val) {
     node* new = malloc(sizeof(*new));

@@ -8,7 +8,7 @@
 
 int main() {
 
-node* root = createRoot(4);
+node* root = createNode(4);
 
 insert(root, 5);
 insert(root, 10);
