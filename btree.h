@@ -12,15 +12,25 @@ typedef struct node {
     struct node* right;
 } node;
 
-
+node* createRoot(int);
 node* insert(node*, int);
 node* createNode(int);
 node* find_by_val(node*, int);
 void printTree(node*, size_t);
+void freeTree(node*, int);
+
+node* createRoot(int v) {
+    node* r = malloc(sizeof(*r));
+    r->val = v;
+    r->left = NULL;
+    r->right = NULL;
+}
 
 node* createNode(int val) {
     node* new = malloc(sizeof(*new));
     new->val = val;
+    new->left = NULL;
+    new->right = NULL;
     return new;
 }
 
@@ -60,9 +70,19 @@ void printTree(node* n, size_t level) {
     }
     printf("-%d-%lu\n", n->val, level);
     printTree(n->left, level+1);
-
     printTree(n->right, level+1);
     
+}
+
+void freeTree(node* n, int lvl) {
+    if (n == NULL) 
+        return;
+   // example of post order traversal, needed for memory deallocation.
+   // recursion CAN lead to stack overflow. iterative method increases time
+   // complexity. 
+    freeTree(n->left, lvl+1);
+    freeTree(n->right, lvl+1);
+    free(n);
 }
 
 
