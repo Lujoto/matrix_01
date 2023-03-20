@@ -20,18 +20,16 @@ insert(root, 7);
 insert(root, 9);
 insert(root, 6);
 
-node* p = root;
-while (p != NULL) {
-    printf("\n%d", p->val);
-    p = p->right;
-}
-
-node* found = find_by_val(root, 5);
-if (found != NULL) { printf("\n Found Value: %d\n", found->val); }
-
 printTree(root, 0);
-freeTree(root, 0);
+printf("\n%s\n", "==================================");
+deleteNode(root, 1);
+printTree(root, 0);
+printf("\n%s\n", "==================================");
+deleteNode(root, 8);
+printTree(root, 0);
+printf("\n%s\n", "==================================");
 
+freeTree(root, 0);
 
     
 }
