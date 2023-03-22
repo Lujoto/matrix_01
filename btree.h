@@ -4,27 +4,38 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h> 
-
+#include <time.h> 
+#include <math.h> 
+#include <stdint.h> 
+#include <stddef.h>
+#include <sys/time.h>
 
 typedef struct node {
-    int val;
+    float val;
     struct node* left;
     struct node* right;
 } node;
 
 node* createRoot(int);
-node* insert(node*, int);
-node* createNode(int);
-node* find_by_val(node*, int);
+node* insert(node*, float);
+node* createNode(float);
+node* find_by_val(node*, float);
 node* findBottomR(node*);
 node* findBottomL(node*);
-node* deleteNode(node*, int);
+node* deleteNode(node*, float);
 void printTree(node*, size_t);
 void freeTree(node*, int);
 
 
 
-node* createNode(int val) {
+uint64_t nanos() {
+    struct timespec start;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+   // printf("\n %ld tv sec \n %ld tv nsec \n", start.tv_sec, start.tv_nsec);
+    return (uint64_t)start.tv_sec*1e9 + (uint64_t)start.tv_nsec;
+}
+
+node* createNode(float val) {
     node* new = malloc(sizeof(*new));
     new->val = val;
     new->left = NULL;
@@ -32,7 +43,7 @@ node* createNode(int val) {
     return new;
 }
 
-node* insert(node* n, int v) {
+node* insert(node* n, float v) {
     if (n == NULL) {
        n = createNode(v);
        return n;
@@ -45,7 +56,7 @@ node* insert(node* n, int v) {
     return n;
 }
 
-node* find_by_val(node* n, int v) {
+node* find_by_val(node* n, float v) {
     if (n == NULL) {
         printf("\n%s\n", "find_by_val: The search is over!");
         return n;
@@ -76,7 +87,7 @@ node* findBottomL(node* n) {
 
 
 
-node* deleteNode(node* n, int v) {
+node* deleteNode(node* n, float v) {
     if (n == NULL)
         return NULL;
     if (n->val == v) {              // if we find a matching node: 
@@ -122,7 +133,7 @@ void printTree(node* n, size_t level) {
         
     }
     
-    printf("-%d-%lu\n", n->val, level);
+    printf("-%f-%lu\n", n->val, level);
     printTree(n->left, level+1);
     printTree(n->right, level+1);
     
