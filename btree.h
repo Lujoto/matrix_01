@@ -16,6 +16,7 @@ typedef struct node {
     struct node* right;
 } node;
 
+uint64_t nanos();
 node* createRoot(int);
 node* insert(node*, float);
 node* createNode(float);
@@ -25,7 +26,6 @@ node* findBottomL(node*);
 node* deleteNode(node*, float);
 void printTree(node*, size_t);
 void freeTree(node*, int);
-
 
 
 uint64_t nanos() {
