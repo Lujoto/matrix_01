@@ -25,6 +25,7 @@ node* findBottomR(node*);
 node* findBottomL(node*);
 node* deleteNode(node*, float);
 void printTree(node*, size_t);
+int* countTree(node*, size_t, int*);
 void freeTree(node*, int);
 
 
@@ -122,7 +123,19 @@ node* deleteNode(node* n, float v) {
    }
 
 
+int* countTree(node* n, size_t level, int *countBucket) {
+    if (n == NULL) {
+        return countBucket;
+    }
+    countBucket[level]++;
+    //printf("-%f-%lu\n", n->val, level);
+    countTree(n->left, level+1, countBucket);
+    countTree(n->right, level+1, countBucket);
+    
+    return countBucket;
+}
 
+//printTree
 void printTree(node* n, size_t level) {
     if (n == NULL) {
         return;
@@ -131,14 +144,12 @@ void printTree(node* n, size_t level) {
     for (int i = 0; i < level; i++) {
         printf("%c", ' ');
         
-    }
-    
+    } 
     printf("-%f-%lu\n", n->val, level);
     printTree(n->left, level+1);
     printTree(n->right, level+1);
     
 }
-
 void freeTree(node* n, int lvl) {
     if (n == NULL) 
         return;
