@@ -2,14 +2,15 @@
 
 
 int main() {
-    FILE* f = createXml();
-    FILE* pipe = createPipe(f);
+     
+    //FILE* pipe = createPipe(f);
 
-    plotgnu(f);
+    
+    plotgnu();
 
 
     
-    fprintf(pipe, "ls\n" );
+    //fprintf(pipe, "ls\n" );
 
 
 
