@@ -15,7 +15,7 @@ double* crm2(double);
 double magn(double*);
 double dotp(double*, double*);
 double angbet(double*, double*);
-
+double* rot3Dx(double*, double);
 
 
 
@@ -59,13 +59,44 @@ double angbet(double* p, double* v) {
 
 double* crm2(double th) {
     double* dd = (double*)malloc(sizeof(*dd)*MX_2D);
-    dd[0] = cos(th);
-    dd[1] = -1*sin(th);
-    dd[2] = sin(th);
-    dd[3] = cos(th);
-    //dd[4] = NULL;
+    dd[0] = cos(th); dd[1] = -1*sin(th);
+    dd[2] = sin(th); dd[3] = cos(th);
     return dd;
 }    
+
+//create 3D rotation matrix about x-axis
+double* crm3x(double th) {
+    double* dd = (double*)malloc(sizeof(*dd)*MX_3D);
+    dd[0] = 1; dd[1] = 0;       dd[2] = 0;
+    dd[3] = 0; dd[4] = cos(th); dd[5] = (-1)*sin(th);
+    dd[6] = 0; dd[7] = sin(th); dd[8] = cos(th);
+
+    return dd;
+}    
+
+
+//create 3D rotation matrix about y-axis
+double* crm3y(double th) {
+    double* dd = (double*)malloc(sizeof(*dd)*MX_3D);
+    dd[0] = cos(th);      dd[1] = 0;       dd[2] = sin(th);
+    dd[3] = 0;            dd[4] = 1;       dd[5] = 0;
+    dd[6] = (-1)*sin(th); dd[7] = 0;       dd[8] = cos(th);
+
+    return dd;
+}    
+
+//create 3D rotation matrix about z-axis
+double* crm3z(double th) {
+    double* dd = (double*)malloc(sizeof(*dd)*MX_3D);
+    dd[0] = cos(th); dd[1] = -1*sin(th);  dd[2] = 0;
+    dd[3] = sin(th); dd[4] = cos(th);     dd[5] = 0;
+    dd[6] = 0;       dd[7] = 0;           dd[8] = 1;
+
+    return dd;
+}    
+
+
+
 
 
 double* rotx(double* v, double theta)    {
@@ -86,6 +117,9 @@ double* rotx(double* v, double theta)    {
 
 }
 
+double* rot3Dx(double *v, double th) {
+
+}
 
 
 
