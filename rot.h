@@ -23,7 +23,7 @@ double* rot3Dx(double*, double);
 //use size N to dot product two single dimension arrays
 double dotp(double* p, double* v) {
     double ret = 0.0;
-    for (size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < A; i++) {
         ret += p[i]*v[i];
     }
     return ret;
@@ -37,7 +37,7 @@ double magn(double* vector) {
     }
    //add up the squares of the components 
     double temp = 0.0;
-    for (size_t i = 0; i < N; i++)  {
+    for (size_t i = 0; i < A; i++)  {
         temp += pow(vector[i], 2); //could change this to a single flop
     }
    //take the square root 
@@ -97,8 +97,7 @@ double* crm3z(double th) {
 
 
 
-
-
+//2D rotate a vector about x-axis
 double* rotx(double* v, double theta)    {
     if (v == NULL) {
         exit(EXIT_FAILURE);
@@ -117,7 +116,61 @@ double* rotx(double* v, double theta)    {
 
 }
 
+//3D rotation transformation about x-axis
 double* rot3Dx(double *v, double th) {
+    if (v == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    double* rt = crm3x(th);
+    double* temp = calloc(A, sizeof(*temp));
+
+    for (int i = 0; i < MX_3D; i++) {
+        temp[i/A] += rt[i]*v[i%A];  
+    }
+
+    v = temp;
+    free(rt);
+    return v;
+
+}
+
+
+//3D rotation transformation about y-axis
+double* rot3Dy(double *v, double th) {
+    if (v == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    double* rt = crm3y(th);
+    double* temp = calloc(A, sizeof(*temp));
+
+    for (int i = 0; i < MX_3D; i++) {
+        temp[i/A] += rt[i]*v[i%A];  
+    }
+
+    v = temp;
+    free(rt);
+    return v;
+
+}
+
+//3D rotation transformation about z-axis
+double* rot3Dz(double *v, double th) {
+    if (v == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    double* rt = crm3z(th);
+    double* temp = calloc(A, sizeof(*temp));
+
+    for (int i = 0; i < MX_3D; i++) {
+        temp[i/A] += rt[i]*v[i%A];  
+    }
+
+    v = temp;
+    free(rt);
+    return v;
 
 }
 
