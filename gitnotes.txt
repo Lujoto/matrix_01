@@ -45,3 +45,7 @@ origin/main
 
 ===
 
+
+( NOTE:   can't push from Ubuntu application: prompts for username and password, 
+        but then complains about no support for authentication. )
+
