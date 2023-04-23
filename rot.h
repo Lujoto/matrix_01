@@ -137,7 +137,7 @@ double* rot3Dx(double *v, double th) {
 
 
 //3D rotation transformation about y-axis
-double* rot3Dy(double *v, double th) {
+double* rot3Dy(double *v, double th) { //double* 3D vector, double angle in rads. 
     if (v == NULL) {
         exit(EXIT_FAILURE);
     }
