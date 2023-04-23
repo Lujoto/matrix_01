@@ -37,7 +37,7 @@ fprintf(origin, "%lf,%lf,%lf\n", 0.0, 0.0, 0.0);
  //fprintf(x, "%lf,%lf,%lf\n", ref1[0], ref1[1], ref1[2]);
  //fprintf(x, "%lf,%lf,%lf\n", ref2[0], ref2[1], ref2[2]);
  //fprintf(x, "%lf,%lf,%lf\n", ref3[0], ref3[1], ref3[2]);
- fprintf(x, "%lf,%lf,%lf\n", ref4[0], ref4[1], ref4[2]);
+ //fprintf(x, "%lf,%lf,%lf\n", ref4[0], ref4[1], ref4[2]);
  //fprintf(x, "%lf,%lf,%lf\n", ref5[0], ref5[1], ref5[2]);
 
 
@@ -81,9 +81,10 @@ fopen("antenna.txt", "r");
             while (!feof(antenna)) {
             fscanf(antenna, "%lf,%lf,%lf\n", &buffer[0], &buffer[1], &buffer[2]);
             //double* temp2 = rot3Dx(buffer, PI/2); // this rolls the antenna
+           if (buffer[2] > 0) { 
             double* temp1 = rot3Dy(buffer, PI/3); // this 
             double* temp = rot3Dz(temp1, PI/6);
-            fprintf(z, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]);
+            fprintf(z, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]); }
         }    
         
             
@@ -130,7 +131,7 @@ FILE* pipe = popen("gnuplot -persist", "w");
     fprintf(pipe, "set terminal pdf size 9,9\n");
    // fprintf(pipe, "set terminal gif animate delay 5 loop 0 optimize\n");
     fprintf(pipe, "set datafile sep \',\'\n");
-    fprintf(pipe, "set view 66,50\n");
+    fprintf(pipe, "set view 90,90\n");
     fprintf(pipe, "set xrange [-1:1]\n");
     fprintf(pipe, "set yrange [-1:1]\n");
     fprintf(pipe, "set zrange [-1:1]\n");
@@ -147,9 +148,9 @@ FILE* pipe = popen("gnuplot -persist", "w");
     fprintf(pipe, "splot \"antenna.txt\" using 1:2:3 w p pt 7 ps 0.25 lt rgb \"purple\"\n");
     //fprintf(pipe, "splot \"xyy.txt\" using 1:2:3 w p pt 7 ps 0.2 lt rgb \"cyan\"\n");
     fprintf(pipe, "splot \"y.txt\" using 1:2:3 w p pt 12 ps 0.35 lt rgb \"purple\"\n");
-    fprintf(pipe, "splot \"x.txt\" using 1:2:3 w p pt 7 ps 0.35 lt rgb \"red\"\n");
-    fprintf(pipe, "splot \"z.txt\" using 1:2:3 w p pt 7 ps 0.35 lt rgb \"red\"\n");
-    fprintf(pipe, "splot \"origin.txt\" using 1:2:3 w p pt 7 ps 0.55 lt rgb \"blue\"\n");
+    fprintf(pipe, "splot \"x.txt\" using 1:2:3 w p pt 6 ps 0.35 lt rgb \"red\"\n");
+    fprintf(pipe, "splot \"z.txt\" using 1:2:3 w p pt 6 ps 0.15 lt rgb \"red\"\n");
+    fprintf(pipe, "splot \"origin.txt\" using 1:2:3 w p pt 7 ps 0.55 lt rgb \"green\"\n");
     fprintf(pipe, "splot \"scan.txt\" using 1:2:3 w p pt 7 ps 0.35 lt rgb \"blue\"\n");
 
 
