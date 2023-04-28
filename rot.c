@@ -1,5 +1,6 @@
 #include "rot.h"
 
+#define ANTENNA_ROM_PLOT
 #define MECHANICAL_LIMIT 64.3
 #define MAX_ANTENNA_ANGLE_RAD 1.122
 #define ELECTRICAL_LIMIT_RAD 1.122
@@ -12,6 +13,7 @@
 
 //#define ROLLED
 //#define ELEC_LIMITS
+//#define REF_POINTS
 #define ROM_TRANSFORM
 #define MECHANICAL_LIMIT_CIRCLE
 #define SCAN
@@ -31,20 +33,19 @@ int main() {
 
 
     FILE* antenna = fopen("antenna.txt", "w");
-    FILE* reference_points = fopen("reference_points.txt", "w");
-    FILE* mech_lim_circle = fopen("mech_lim_circle.txt", "w");
-    FILE* rom_transform = fopen("rom_transform.txt", "w");
-    FILE* origin = fopen("origin.txt", "w");
-    FILE* scan = fopen("scan.txt", "w");
 
   
 //Origin FILE input
 #ifdef ORIGIN
-fprintf(origin, "%lf,%lf,%lf\n", 0.0, 0.0, 0.0);
+    FILE* origin = fopen("origin.txt", "w");
+    fprintf(origin, "%lf,%lf,%lf\n", 0.0, 0.0, 0.0);
+    fclose(origin);
 #endif
 
 //Reference points file
- double *ref1 = rot3Dz(rot3Dy(a, -PI/3), PI/6);
+#ifdef REF_POINTS
+FILE* reference_points = fopen("reference_points.txt", "w");
+ double *ref1 =  rot3Dz(rot3Dy(a, -PI/3), PI/6);
  double *ref2 =  rot3Dz(rot3Dy(a, PI/3), -PI/6);
  double *ref3 =  rot3Dy(rot3Dz(a, PI/6), -PI/3);
  double *ref4 =  rot3Dy(rot3Dz(a, PI/3), -PI/6);
@@ -55,10 +56,12 @@ fprintf(origin, "%lf,%lf,%lf\n", 0.0, 0.0, 0.0);
  //fprintf(reference_points, "%lf,%lf,%lf\n", ref3[0], ref3[1], ref3[2]);
  //fprintf(reference_points, "%lf,%lf,%lf\n", ref4[0], ref4[1], ref4[2]);
  //fprintf(reference_points, "%lf,%lf,%lf\n", ref5[0], ref5[1], ref5[2]);
-
+ fclose(reference_points);
+#endif
 
 //Original orientation Range of motion plot, 
 //with either Mechanical or Electrical Limits.
+#ifdef ANTENNA_ROM_PLOT
     double b[3] = {1.0, 0.0, 0.0}; // unit vector in the +X direction 
     for (double i = -MAX_MECH_AZ*TO_RAD; i < MAX_MECH_AZ*TO_RAD; i+=STEP_DEG*TO_RAD) {
         for (double j = -MAX_MECH_EL*TO_RAD; j < MAX_MECH_EL*TO_RAD; j+=STEP_DEG*TO_RAD) {
@@ -79,48 +82,52 @@ fprintf(origin, "%lf,%lf,%lf\n", 0.0, 0.0, 0.0);
                 
         }
     }
+#endif
 
 // Antenna limit circle
 #ifdef MECHANICAL_LIMIT_CIRCLE
+    FILE* mech_lim_circle = fopen("mech_lim_circle.txt", "w");
     for (double i = 0.0; i < 2*PI; i+=PI/90) {
-        double* temp = rot3Dx(rot3Dy(a, 1.122247), i);
+        double* temp = rot3Dx(rot3Dy(a, MECHANICAL_LIMIT*TO_RAD), i);
         fprintf(mech_lim_circle, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]);
 
     }
+    fclose(mech_lim_circle);
 #endif
 
 // scan from 0 to 30
 #ifdef SCAN
-    for (double i = 0.0; i < PI/6; i+=PI/180) {
-        double* temp = rot3Dz(a, i);
-        double* temp2 = rot3Dy(rot3Dz(a, SCAN_AZ*TO_RAD), i);
-        fprintf(scan, "%lf,%lf,%lf\n", temp2[0], temp2[1], temp2[2]);
-        //fprintf(scan, "%lf,%lf,%lf\n", temp2[0], temp2[1], temp2[2]);
-    }
+    FILE* scan = fopen("scan.txt", "w");
+        for (double i = 0.0; i < PI/6; i+=PI/180) {
+            double* temp = rot3Dz(a, i);
+            double* temp2 = rot3Dy(rot3Dz(a, SCAN_AZ*TO_RAD), i);
+            fprintf(scan, "%lf,%lf,%lf\n", temp2[0], temp2[1], temp2[2]);
+            //fprintf(scan, "%lf,%lf,%lf\n", temp2[0], temp2[1], temp2[2]);
+        }
+    fclose(scan);
 #endif
 
 // rotations of the antenna surface 
 #ifdef ROM_TRANSFORM
-fclose(antenna);
-fopen("antenna.txt", "r");
-        double buffer[3] = {0.0,0.0,0.0};
-            while (!feof(antenna)) {
-                fscanf(antenna, "%lf,%lf,%lf\n", &buffer[0], &buffer[1], &buffer[2]);
-                if (buffer[2]>0) {
-                    double* temp1 = rot3Dy(buffer, EL*TO_RAD);  
-                    double* temp = rot3Dz(temp1, AZ*TO_RAD);
-                    fprintf(rom_transform, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]); 
+    FILE* rom_transform = fopen("rom_transform.txt", "w");
+    fclose(antenna);
+    antenna = fopen("antenna.txt", "r");
+            double buffer[3] = {0.0,0.0,0.0};
+                while (!feof(antenna)) {
+                    fscanf(antenna, "%lf,%lf,%lf\n", &buffer[0], &buffer[1], &buffer[2]);
+                    if (buffer[2]>0) {
+                        double* temp1 = rot3Dy(buffer, EL*TO_RAD);  
+                        double* temp = rot3Dz(temp1, AZ*TO_RAD);
+                        fprintf(rom_transform, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]); 
+                    }
                 }
-            }
+    fclose(rom_transform);
+    fclose(antenna);
+
 #endif 
 
 
-    fclose(antenna);
-    fclose(mech_lim_circle);
     fclose(reference_points);
-    fclose(rom_transform);
-    fclose(origin);
-    fclose(scan);
     
 
 
@@ -165,7 +172,7 @@ FILE* pipe = popen("gnuplot -persist", "w");
     //fprintf(pipe, "set dgrid3d\n"); //idk what this does but it screwed me on a spherical surface
     //fprintf(pipe, "set contour surface\n");
     //fprintf(pipe, "set cntrparam bspline\n");
-    fprintf(pipe, "set output \"rot_g.pdf\"\n");
+    fprintf(pipe, "set output \"rot.pdf\"\n");
     fprintf(pipe, "set multiplot\n");
 
     fprintf(pipe, "splot \"antenna.txt\" using 1:2:3 w p pt 7 ps 0.25 lt rgb \"grey\"\n");
@@ -177,8 +184,6 @@ FILE* pipe = popen("gnuplot -persist", "w");
     //fprintf(pipe, "splot \"red.txt\" using 1:2:3 w p pt 6 ps 0.25 lt rgb \"cyan\"\n");
     fprintf(pipe, "splot \"origin.txt\" using 1:2:3 w p pt 7 ps 0.55 lt rgb \"red\"\n");
     fprintf(pipe, "splot \"scan.txt\" using 1:2:3 w p pt 6 ps 0.75 lt rgb \"blue\"\n");
-
-
 
     fprintf(pipe, "set nomultiplot\n");
 
