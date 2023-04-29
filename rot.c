@@ -1,16 +1,6 @@
 #include "rot2.h"
 
 #define ANTENNA_ROM_PLOT
-#define MECHANICAL_LIMIT 64.3    
-#define MAX_ANTENNA_ANGLE_RAD 1.122
-#define ELECTRICAL_LIMIT_RAD 1.122
-#define EL 60
-#define AZ 30
-#define TO_RAD .017453292519943 
-#define MAX_MECH_AZ 60
-#define MAX_MECH_EL 60
-#define STEP_DEG 1
-
 //#define ROLLED
 //#define ELEC_LIMITS
 //#define REF_POINTS
@@ -21,6 +11,15 @@
 #define SCAN_END 10
 #define ORIGIN
 //#define SWITCH_TRANSFORM_ORDER
+#define MECHANICAL_LIMIT 64.3
+#define ELECTRICAL_LIMIT 64.3
+#define EL 60
+#define AZ 30
+#define TO_RAD .017453292519943 
+#define MAX_MECH_AZ 60
+#define MAX_MECH_EL 60
+#define STEP_DEG 1.25
+
 
 
 int main() {
@@ -65,7 +64,7 @@ FILE* reference_points = fopen("reference_points.txt", "w");
                 rot3Dz(rot3Dy(b, i), j); // extrinsic 30 z after 60 y (or intrinsic 60 y after 30 z)
             #endif 
             #ifdef ELEC_LIMITS
-                    if (sqrt(i*i+j*j) < ELECTRICAL_LIMIT_RAD) {
+                    if (sqrt(i*i+j*j) < ELECTRICAL_LIMIT*TO_RAD) {
                         fprintf(antenna, "%lf,%lf,%lf\n",b[0], b[1], b[2]);
                     }
                 #else 
