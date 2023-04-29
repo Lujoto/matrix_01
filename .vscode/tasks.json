@@ -33,6 +33,7 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
+                "rot2.c",
                 "-lm"
             ],
             "options": {

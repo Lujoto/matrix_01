@@ -1,4 +1,4 @@
-#include "rot.h"
+#include "rot2.h"
 
 #define ANTENNA_ROM_PLOT
 #define MECHANICAL_LIMIT 64.3    
@@ -17,9 +17,10 @@
 #define ROM_TRANSFORM
 #define MECHANICAL_LIMIT_CIRCLE
 #define SCAN
-#define SCAN_AZ 30
-#define SCAN_EL 0
+#define SCAN_START 0
+#define SCAN_END 10
 #define ORIGIN
+//#define SWITCH_TRANSFORM_ORDER
 
 
 int main() {
@@ -59,17 +60,17 @@ FILE* reference_points = fopen("reference_points.txt", "w");
         for (double j = -MAX_MECH_EL*TO_RAD; j < MAX_MECH_EL*TO_RAD; j+=STEP_DEG*TO_RAD) {
             double b[3] = {1.0, 0.0, 0.0};
             #ifdef ROLLED
-                double* temp = rot3Dy(rot3Dz(b, j), i); // extrinsic y after z 
+                rot3Dy(rot3Dz(b, j), i); // extrinsic y after z 
                 #else
-                double* temp = rot3Dz(rot3Dy(b, i), j); // extrinsic 30 z after 60 y (or intrinsic 60 y after 30 z)
+                rot3Dz(rot3Dy(b, i), j); // extrinsic 30 z after 60 y (or intrinsic 60 y after 30 z)
             #endif 
             #ifdef ELEC_LIMITS
                     if (sqrt(i*i+j*j) < ELECTRICAL_LIMIT_RAD) {
-                        fprintf(antenna, "%lf,%lf,%lf\n",temp[0], temp[1], temp[2]);
+                        fprintf(antenna, "%lf,%lf,%lf\n",b[0], b[1], b[2]);
                     }
                 #else 
-                    if (angbet(temp, a) < MECHANICAL_LIMIT) {
-                        fprintf(antenna, "%lf,%lf,%lf\n",temp[0], temp[1], temp[2]);
+                    if (angbet(b, a) < MECHANICAL_LIMIT) {
+                        fprintf(antenna, "%lf,%lf,%lf\n",b[0], b[1], b[2]);
                     }
                 #endif
         }
@@ -91,13 +92,11 @@ FILE* reference_points = fopen("reference_points.txt", "w");
 // scan from 0 to 30
 #ifdef SCAN
     FILE* scan = fopen("scan.txt", "w");
-        for (double i = 0.0; i < PI/6; i+=PI/180) {
+        for (double i = SCAN_START*TO_RAD; i < SCAN_END*TO_RAD; i+=PI/180) {
 
             double b[3] = {1.0, 0.0, 0.0};
-            double* temp = rot3Dz(b, i);
-            //double* temp2 = rot3Dy(rot3Dz(b, SCAN_AZ*TO_RAD), i);
-            fprintf(scan, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]);
-            //fprintf(scan, "%lf,%lf,%lf\n", temp2[0], temp2[1], temp2[2]);
+            rot3Dz(b, i);
+            fprintf(scan, "%lf,%lf,%lf\n", b[0], b[1], b[2]);
         }
     fclose(scan);
 #endif
@@ -111,9 +110,13 @@ FILE* reference_points = fopen("reference_points.txt", "w");
                     double buffer[3] = {0.0,0.0,0.0};
                     fscanf(antenna, "%lf,%lf,%lf\n", &buffer[0], &buffer[1], &buffer[2]);
                     if (buffer[2]>0) {
-                        double* temp1 = rot3Dy(buffer, EL*TO_RAD);  
-                        double* temp = rot3Dz(temp1, AZ*TO_RAD);
-                        fprintf(rom_transform, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]); 
+                       #ifdef SWITCH_TRANSFORM_ORDER
+                        rot3Dy(rot3Dz(buffer, AZ*TO_RAD), EL*TO_RAD);
+                        fprintf(rom_transform, "%lf,%lf,%lf\n", buffer[0], buffer[1], buffer[2]); 
+                        #else
+                        rot3Dz(rot3Dy(buffer, EL*TO_RAD), AZ*TO_RAD);
+                        fprintf(rom_transform, "%lf,%lf,%lf\n", buffer[0], buffer[1], buffer[2]); 
+                        #endif
                     }
                 }
     fclose(rom_transform);
@@ -154,7 +157,7 @@ FILE* pipe = popen("gnuplot -persist", "w");
 
     fprintf(pipe, "set terminal pdf size 9,9 background rgb \"black\" \n");
     fprintf(pipe, "set datafile sep \',\'\n");
-    fprintf(pipe, "set view 80,70\n");
+    fprintf(pipe, "set view 90,90\n");
     fprintf(pipe, "set xrange [-1:1]\n");
     fprintf(pipe, "set yrange [-1:1]\n");
     fprintf(pipe, "set zrange [-1:1]\n");
@@ -166,18 +169,25 @@ FILE* pipe = popen("gnuplot -persist", "w");
     //fprintf(pipe, "set dgrid3d\n"); //idk what this does but it screwed me on a spherical surface
     //fprintf(pipe, "set contour surface\n");
     //fprintf(pipe, "set cntrparam bspline\n");
-    fprintf(pipe, "set output \"rot.pdf\"\n");
+    fprintf(pipe, "set output \"rot2.pdf\"\n");
     fprintf(pipe, "set multiplot\n");
 
-    fprintf(pipe, "splot \"antenna.txt\" using 1:2:3 w p pt 7 ps 0.25 lt rgb \"grey\"\n");
-    //fprintf(pipe, "splot \"antenna_rolled.txt\" using 1:2:3 w p pt 7 ps 0.2 lt rgb \"grey\"\n");
+
+    #ifdef ANTENNA_ROM_PLOT
+    fprintf(pipe, "splot \"antenna.txt\" using 1:2:3 w p pt 7 ps 0.20 lt rgb \"grey\"\n");
+    #endif
+    #ifdef MECHANICAL_LIMIT_CIRCLE
     fprintf(pipe, "splot \"mech_lim_circle.txt\" using 1:2:3 w p pt 12 ps 0.35 lt rgb \"purple\"\n");
-    //fprintf(pipe, "splot \"reference_points.txt\" using 1:2:3 w p pt 6 ps 0.35 lt rgb \"red\"\n");
+    #endif
+    #ifdef ROM_TRANSFORM
     fprintf(pipe, "splot \"rom_transform.txt\" using 1:2:3 w p pt 6 ps 0.25 lt rgb \"green\"\n");
-    //fprintf(pipe, "splot \"blue.txt\" using 1:2:3 w p pt 6 ps 0.25 lt rgb \"cyan\"\n");
-    //fprintf(pipe, "splot \"red.txt\" using 1:2:3 w p pt 6 ps 0.25 lt rgb \"cyan\"\n");
+    #endif
+    #ifdef ORIGIN
     fprintf(pipe, "splot \"origin.txt\" using 1:2:3 w p pt 7 ps 0.55 lt rgb \"red\"\n");
+    #endif
+    #ifdef SCAN
     fprintf(pipe, "splot \"scan.txt\" using 1:2:3 w p pt 6 ps 0.75 lt rgb \"blue\"\n");
+    #endif
 
     fprintf(pipe, "set nomultiplot\n");
 
