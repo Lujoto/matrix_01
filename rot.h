@@ -125,11 +125,15 @@ double* rot3Dx(double *v, double th) {
     double* rt = crm3x(th);
     double* temp = calloc(A, sizeof(*temp));
 
-    for (int i = 0; i < MX_3D; i++) {
+   for (int i = 0; i < MX_3D; i++) {
         temp[i/A] += rt[i]*v[i%A];  
     }
 
-    v = temp;
+    for (int i = 0; i < A; i++) {
+        v[i] = temp[i];
+    }
+
+    free(temp);
     free(rt);
     return v;
 
@@ -149,8 +153,12 @@ double* rot3Dy(double *v, double th) { //double* 3D vector, double angle in rads
         temp[i/A] += rt[i]*v[i%A];  
     }
 
-    v = temp;
+    for(int i = 0; i < A; i++) {
+        v[i] = temp[i];
+    }
+    //v = temp;
     free(rt);
+    free(temp);
     return v;
 
 }
@@ -167,9 +175,14 @@ double* rot3Dz(double *v, double th) {
     for (int i = 0; i < MX_3D; i++) {
         temp[i/A] += rt[i]*v[i%A];  
     }
-
-    v = temp;
+    for (int i = 0; i < A; i ++) {
+        v[i] = temp[i];
+    }
+    
+    free(temp);
+    
     free(rt);
+    
     return v;
 
 }

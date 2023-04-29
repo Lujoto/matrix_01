@@ -1,7 +1,7 @@
 #include "rot.h"
 
 #define ANTENNA_ROM_PLOT
-#define MECHANICAL_LIMIT 64.3
+#define MECHANICAL_LIMIT 64.3    
 #define MAX_ANTENNA_ANGLE_RAD 1.122
 #define ELECTRICAL_LIMIT_RAD 1.122
 #define EL 60
@@ -17,23 +17,14 @@
 #define ROM_TRANSFORM
 #define MECHANICAL_LIMIT_CIRCLE
 #define SCAN
-#define SCAN_AZ 20
+#define SCAN_AZ 30
 #define SCAN_EL 0
 #define ORIGIN
 
 
 int main() {
 
-
-    double a[3] = {1.000, 0.0, 0.0}; 
-    //double* temp = rot3Dx(a, PI/3);
-    //temp = rot3Dz(temp, PI/6);
-
-
-
-
-    FILE* antenna = fopen("antenna.txt", "w");
-
+double a[3] = {1.0,0.0,0.0};
   
 //Origin FILE input
 #ifdef ORIGIN
@@ -62,9 +53,11 @@ FILE* reference_points = fopen("reference_points.txt", "w");
 //Original orientation Range of motion plot, 
 //with either Mechanical or Electrical Limits.
 #ifdef ANTENNA_ROM_PLOT
-    double b[3] = {1.0, 0.0, 0.0}; // unit vector in the +X direction 
+    FILE* antenna = fopen("antenna.txt", "w");
+    //double b[3] = {1.0, 0.0, 0.0}; // unit vector in the +X direction 
     for (double i = -MAX_MECH_AZ*TO_RAD; i < MAX_MECH_AZ*TO_RAD; i+=STEP_DEG*TO_RAD) {
         for (double j = -MAX_MECH_EL*TO_RAD; j < MAX_MECH_EL*TO_RAD; j+=STEP_DEG*TO_RAD) {
+            double b[3] = {1.0, 0.0, 0.0};
             #ifdef ROLLED
                 double* temp = rot3Dy(rot3Dz(b, j), i); // extrinsic y after z 
                 #else
@@ -75,22 +68,22 @@ FILE* reference_points = fopen("reference_points.txt", "w");
                         fprintf(antenna, "%lf,%lf,%lf\n",temp[0], temp[1], temp[2]);
                     }
                 #else 
-                    if (angbet(temp, b) < MECHANICAL_LIMIT) {
+                    if (angbet(temp, a) < MECHANICAL_LIMIT) {
                         fprintf(antenna, "%lf,%lf,%lf\n",temp[0], temp[1], temp[2]);
                     }
                 #endif
-                
         }
     }
+    fclose(antenna);
 #endif
 
 // Antenna limit circle
 #ifdef MECHANICAL_LIMIT_CIRCLE
     FILE* mech_lim_circle = fopen("mech_lim_circle.txt", "w");
     for (double i = 0.0; i < 2*PI; i+=PI/90) {
-        double* temp = rot3Dx(rot3Dy(a, MECHANICAL_LIMIT*TO_RAD), i);
+        double b[3] = {1.0, 0.0, 0.0};
+        double* temp = rot3Dx(rot3Dy(b, MECHANICAL_LIMIT*TO_RAD), i);
         fprintf(mech_lim_circle, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]);
-
     }
     fclose(mech_lim_circle);
 #endif
@@ -99,9 +92,11 @@ FILE* reference_points = fopen("reference_points.txt", "w");
 #ifdef SCAN
     FILE* scan = fopen("scan.txt", "w");
         for (double i = 0.0; i < PI/6; i+=PI/180) {
-            double* temp = rot3Dz(a, i);
-            double* temp2 = rot3Dy(rot3Dz(a, SCAN_AZ*TO_RAD), i);
-            fprintf(scan, "%lf,%lf,%lf\n", temp2[0], temp2[1], temp2[2]);
+
+            double b[3] = {1.0, 0.0, 0.0};
+            double* temp = rot3Dz(b, i);
+            //double* temp2 = rot3Dy(rot3Dz(b, SCAN_AZ*TO_RAD), i);
+            fprintf(scan, "%lf,%lf,%lf\n", temp[0], temp[1], temp[2]);
             //fprintf(scan, "%lf,%lf,%lf\n", temp2[0], temp2[1], temp2[2]);
         }
     fclose(scan);
@@ -109,11 +104,11 @@ FILE* reference_points = fopen("reference_points.txt", "w");
 
 // rotations of the antenna surface 
 #ifdef ROM_TRANSFORM
-    FILE* rom_transform = fopen("rom_transform.txt", "w");
-    fclose(antenna);
+    FILE* rom_transform = fopen("rom_transform.txt", "w"); 
     antenna = fopen("antenna.txt", "r");
-            double buffer[3] = {0.0,0.0,0.0};
                 while (!feof(antenna)) {
+
+                    double buffer[3] = {0.0,0.0,0.0};
                     fscanf(antenna, "%lf,%lf,%lf\n", &buffer[0], &buffer[1], &buffer[2]);
                     if (buffer[2]>0) {
                         double* temp1 = rot3Dy(buffer, EL*TO_RAD);  
@@ -127,7 +122,6 @@ FILE* reference_points = fopen("reference_points.txt", "w");
 #endif 
 
 
-    fclose(reference_points);
     
 
 

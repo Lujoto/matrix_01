@@ -1,6 +1,7 @@
 #ifndef PTR_H
 #define PTR_H
 #include <stdlib.h>
+#include <stdio.h>
 
 
 
