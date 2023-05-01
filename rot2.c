@@ -27,7 +27,7 @@ double magn(double* vector) {
 
 
 
-double angbet(double* p, double* v) {
+double angbet(double* p, double* v) { // arccos{ P dot Q / mag(P)*mag(Q) }
     double temp1 = dotp(p, v);
     double mag1 = magn(p)*magn(v);
     double res = acos(temp1/mag1);
@@ -38,60 +38,34 @@ double angbet(double* p, double* v) {
 
 
 double* crm2(double th) {
-    double* dd = (double*)malloc(sizeof(*dd)*MX_2D);
+    double dd[MX_2D];
     dd[0] = cos(th); dd[1] = -1*sin(th);
     dd[2] = sin(th); dd[3] = cos(th);
     return dd;
 }    
-
-//create 3D rotation matrix about x-axis
-double* crm3x(double th) {
-    double* dd = (double*)malloc(sizeof(*dd)*MX_3D);
-    dd[0] = 1; dd[1] = 0;       dd[2] = 0;
-    dd[3] = 0; dd[4] = cos(th); dd[5] = (-1)*sin(th);
-    dd[6] = 0; dd[7] = sin(th); dd[8] = cos(th);
-
-    return dd;
-}    
-
-
-//create 3D rotation matrix about y-axis
-double* crm3y(double th) {
-    double* dd = (double*)malloc(sizeof(*dd)*MX_3D);
-    dd[0] = cos(th);      dd[1] = 0;       dd[2] = sin(th);
-    dd[3] = 0;            dd[4] = 1;       dd[5] = 0;
-    dd[6] = (-1)*sin(th); dd[7] = 0;       dd[8] = cos(th);
-
-    return dd;
-}    
-
-//create 3D rotation matrix about z-axis
-double* crm3z(double th) {
-    double* dd = (double*)malloc(sizeof(*dd)*MX_3D);
-    dd[0] = cos(th); dd[1] = -1*sin(th);  dd[2] = 0;
-    dd[3] = sin(th); dd[4] = cos(th);     dd[5] = 0;
-    dd[6] = 0;       dd[7] = 0;           dd[8] = 1;
-
-    return dd;
-}    
+    
 
 
 
 //2D rotate a vector about x-axis
-double* rotx(double* v, double theta)    {
+double* rotx(double* v, double th)    {
     if (v == NULL) {
         exit(EXIT_FAILURE);
     }
-
-    double* rt = crm2(theta);
-    double* temp = calloc(2, sizeof(*temp));
+    double dd[MX_2D];
+    dd[0] = cos(th); dd[1] = -1*sin(th);
+    dd[2] = sin(th); dd[3] = cos(th);
+ 
+    double temp[N] = {0,0,0};
 
     for (int i = 0; i < MX_2D; i++) {
-        temp[i/N] += rt[i]*v[i%N];  
+        temp[i/N] += dd[i]*v[i%N];  
     }
 
-    v = temp;
-    free(rt);
+    for (int i =0; i < N; i++) {
+        v[i] = temp[i];
+    }
+
     return v;
 
 }
