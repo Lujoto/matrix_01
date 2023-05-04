@@ -2,7 +2,8 @@
 
 #define ANTENNA_ROM_PLOT
 //#define ROLLED
-//#define ELEC_LIMITS
+#define ELEC_LIMITS
+#define COS_ELEC_LIMITS
 //#define REF_POINTS
 #define ROM_TRANSFORM
 #define MECHANICAL_LIMIT_CIRCLE
@@ -10,15 +11,15 @@
 #define SCAN_START 0
 #define SCAN_END 10
 #define ORIGIN
-//#define SWITCH_TRANSFORM_ORDER
+#define SWITCH_TRANSFORM_ORDER
 #define MECHANICAL_LIMIT 64.3
 #define ELECTRICAL_LIMIT 64.3
-#define EL 60
-#define AZ 30
+#define EL 30
+#define AZ 60
 #define TO_RAD .017453292519943 
 #define MAX_MECH_AZ 60
 #define MAX_MECH_EL 60
-#define STEP_DEG 1.25
+#define STEP_DEG 0.8 
 
 
 
@@ -64,10 +65,15 @@ FILE* reference_points = fopen("reference_points.txt", "w");
                 rot3Dz(rot3Dy(b, i), j); // extrinsic 30 z after 60 y (or intrinsic 60 y after 30 z)
             #endif 
             #ifdef ELEC_LIMITS
-                    if (sqrt(i*i+j*j) < ELECTRICAL_LIMIT*TO_RAD) {
+                #ifdef COS_ELEC_LIMITS
+                    if (acos(cos(i)*cos(j)) < ELECTRICAL_LIMIT*TO_RAD) // this looks like it produces the same surface as the angbet()<MECH_LIMIT
                         fprintf(antenna, "%lf,%lf,%lf\n",b[0], b[1], b[2]);
-                    }
-                #else 
+                #else
+                    if (sqrt(i*i+j*j) < ELECTRICAL_LIMIT*TO_RAD) 
+                        fprintf(antenna, "%lf,%lf,%lf\n",b[0], b[1], b[2]);
+                #endif
+                #else
+                     
                     if (angbet(b, a) < MECHANICAL_LIMIT) {
                         fprintf(antenna, "%lf,%lf,%lf\n",b[0], b[1], b[2]);
                     }
@@ -124,7 +130,7 @@ FILE* reference_points = fopen("reference_points.txt", "w");
 #endif 
 
 
-    
+   // rotz(roty(i, 60), 30) = roty(rotz(i, el), az) 
 
 
 //neat, this works. Can consolidate the rotation functions now, maybe pass
@@ -156,7 +162,7 @@ FILE* pipe = popen("gnuplot -persist", "w");
 
     fprintf(pipe, "set terminal pdf size 9,9 background rgb \"black\" \n");
     fprintf(pipe, "set datafile sep \',\'\n");
-    fprintf(pipe, "set view 90,90\n");
+    fprintf(pipe, "set view 30,90\n");
     fprintf(pipe, "set xrange [-1:1]\n");
     fprintf(pipe, "set yrange [-1:1]\n");
     fprintf(pipe, "set zrange [-1:1]\n");
@@ -179,10 +185,10 @@ FILE* pipe = popen("gnuplot -persist", "w");
     fprintf(pipe, "splot \"mech_lim_circle.txt\" using 1:2:3 w p pt 12 ps 0.35 lt rgb \"purple\"\n");
     #endif
     #ifdef ROM_TRANSFORM
-    fprintf(pipe, "splot \"rom_transform.txt\" using 1:2:3 w p pt 6 ps 0.25 lt rgb \"green\"\n");
+    fprintf(pipe, "splot \"rom_transform.txt\" using 1:2:3 w p pt 6 ps 0.25 lt rgb \"red\"\n");
     #endif
     #ifdef ORIGIN
-    fprintf(pipe, "splot \"origin.txt\" using 1:2:3 w p pt 7 ps 0.55 lt rgb \"red\"\n");
+    fprintf(pipe, "splot \"origin.txt\" using 1:2:3 w p pt 7 ps 0.35 lt rgb \"green\"\n");
     #endif
     #ifdef SCAN
     fprintf(pipe, "splot \"scan.txt\" using 1:2:3 w p pt 6 ps 0.75 lt rgb \"blue\"\n");

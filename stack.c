@@ -10,27 +10,42 @@ void show();
 
 int stack[SIZE];
 int top = -1;
+char junk[256];
 
 int main() {
-int x = 0;
 while (1) {
-printf("\n%s\n", "Choose a stack action brother:");
-printf("%s\n%s\n%s\n", "1. push!", "2. pop", "3. show me the stack");
-scanf("%d", &x);
 
-switch(x) {
-    case 1: push();
-    break;
-    case 2: pop();
-    break;
-    case 3: show();
-    break;
-}
+    int x = 0;
+    char n;
+    printf("\n%s\n", "Choose a stack action brother:");
+    printf("%s\n%s\n%s\n%s\n", "1. push!", "2. pop", "3. show me the stack", "4. terminate the program");
+//some notes about scanf(): 
+//  1. always check return value. It will be 0 if the function fails, for instance
+//      by reading input that does not fit the format.
+//  2. store the characters read by calling scanf() again, pointing it to a buffer...
+//      
+    if (scanf("%d", &x) == 0) {
+        printf("%s\n", "scanf failed!");
+        scanf("%s", junk);
+        printf("%s\n", junk);
+    }
+    
+    switch(x) {
+        case 1: push();
+        break;
+        case 2: pop();
+        break;
+        case 3: show();
+        break;
+        case 4: exit(EXIT_SUCCESS);
+        default: break; 
+    }
+    }
 
-}
+    }
 
 
-}
+
 
 void push() {
     if (top == SIZE - 1) {
